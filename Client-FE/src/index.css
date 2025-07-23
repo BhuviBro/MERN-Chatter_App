@@ -1,0 +1,12 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Quicksand:wght@300..700&family=Ubuntu&family=Varela+Round&display=swap");
+@import "tailwindcss";
+
+* {
+  font-family: "Ubuntu", sans-serif;
+  /* color: aliceblue; */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
