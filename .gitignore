@@ -1,0 +1,30 @@
+# Node modules
+node_modules/
+Client-FE/node_modules/
+Client-BE/node_modules/
+
+# Environment files
+.env
+*.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Optional: test coverage
+coverage/
