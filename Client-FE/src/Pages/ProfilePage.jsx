@@ -1,17 +1,35 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import assets from '../assets/assets'
+import { AuthContext } from '../../Context/AuthContext'
 
 const ProfilePage = () => {
+
+  const { authUser, updateProfile } = useContext(AuthContext)
+
+
   const [selectedImage, setSelectedImage] = useState(null)
   const navigate = useNavigate();
-  const [name, setName] = useState("DummyName")
-  const [bio, setBio] = useState("Hi Everyone this is Bio")
+  const [name, setName] = useState(authUser.fullName)
+  const [bio, setBio] = useState(authUser.bio)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/home');
+    if (!selectedImage) {
+      await updateProfile({ fullName: name, bio })
+      navigate('/');
+      return;
+    }
+    const reader = new FileReader
+    reader.readAsDataURL(selectedImage);
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      await updateProfile({ profilePic: base64Image, fullName: name, bio })
+      navigate('/');
+
+    }
   }
+
   return (
     <div className='min-h-screen bg-cover bg-no-repeat flex items-center justify-center'>
       <div className='w-5/6 max-w-2xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg'>
@@ -29,10 +47,10 @@ const ProfilePage = () => {
 
           <textarea onChange={(e) => { setBio(e.target.value) }} value={bio} required placeholder='Write Profile Bio' className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500' rows={4} id=""></textarea>
 
-          <button  type='submit' className='bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer'>Save</button>
+          <button type='submit' className='bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer'>Save</button>
 
         </form>
-        <img src={assets.logo_icon} className='max-w-44 aspect-square rounded-full mx-20 max-sm:mt-10' alt="" />
+        <img src={ authUser ?.profilePic ||assets.logo_icon} className={`max-w-44 aspect-square rounded-full mx-20 max-sm:mt-10 ${selectedImage && 'rounded-full'}`} alt="" />
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from "../assets/assets"
+import { AuthContext } from '../../Context/AuthContext';
 
 const LoginPage = () => {
   const [currState, setCurrState] = useState('Sign Up');
@@ -9,6 +10,9 @@ const LoginPage = () => {
   const [bio, setBio] = useState('');
   const [isDataSubmitted, setIsDataSubmitted] = useState('');
 
+
+const {login} = useContext(AuthContext)
+
   const onSubmitHandler = (event) => {
     event.preventDefault();
 
@@ -16,6 +20,8 @@ const LoginPage = () => {
       setIsDataSubmitted(true)
       return;
     }
+
+    login(currState === "Sign Up" ? 'signup' : 'login', {fullName,email,password,bio})
   }
 
   return (
@@ -59,7 +65,7 @@ const LoginPage = () => {
           currState === "Sign Up" ? "Create Account" : "Login"}</button>
 
         <div className='flex items-center gap-2 text-s'>
-          <input type="checkbox" />
+          <input type="checkbox"  required/>
           <p>Agree to the terms of Use & Privacy Policy</p>
         </div>
         <div className='flex flex-col gap-2'>
