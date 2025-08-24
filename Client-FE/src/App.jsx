@@ -12,7 +12,7 @@ const App = () => {
 
   return (
 
-    <div className=' bg-[url("/bgImage.svg")] bg-contain bg-center bg-'>
+    <div className=' bg-[url("/bgImage.svg")] bg-contain bg-center '>
       <Toaster />
       <Routes>
 
