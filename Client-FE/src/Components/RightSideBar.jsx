@@ -20,10 +20,10 @@ const RightSideBar = () => {
   return selectedUser && (
 
     // Profile Pic,Bio etc
-    <div className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll ${selectedUser ? "max-md:hidden" : ""}`}>
+    <div className={`bg-[#8185B2]/10 text-white w-full h-full relative overflow-y-scroll ${selectedUser ? "max-md:hidden" : ""}`}>
       <div className='pt-16 flex flex-col items-center gap-2 text-xs font-light mx-auto'>
         <img src={selectedUser?.profilePic || assets.avatar_icon}
-          className='w-20 aspeect-[1/1] rounded-full'
+          className='w-20 aspect-[1/1] rounded-full'
           alt="" />
         <h1 className='px-10 text-xl font-medium mx-auto flex items-center gap-2'>
           {onlineUsers.includes(selectedUser._id)
