@@ -12,6 +12,8 @@ import { log } from "console";
 const app = express();
 const server = http.createServer(app)
 
+
+
 // Initilaize socket.io server
 export const io = new Server(server, {
     cors: { origin: '*' }
@@ -40,7 +42,15 @@ io.on("connection", (socket) => {
 
 // Middle Ware Setup
 app.use(express.json({ limit: "4mb" }))
-app.use(cors());
+const allowedOrigins = [
+  "https://mern-chatter-app.vercel.app",  // your frontend on Vercel
+  "http://localhost:3000"                 // local dev
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 
 
 // Routes Setup
