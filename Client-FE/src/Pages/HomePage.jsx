@@ -11,27 +11,28 @@ const HomePage = () => {
     <div className='border w-full h-screen sm:px-[15%] sm:py-[5%]'>
       <div
         className={`
-          h-[100%] backdrop-blur-xl border-2 border-gray-600 rounded-2xl overflow-hidden grid relative
+          h-full backdrop-blur-xl border-2 border-gray-600 rounded-2xl 
+          grid relative
           ${selectedUser 
             ? 'grid-cols-1 md:grid-cols-[1fr_1.5fr_1fr] xl:grid-cols-[1fr_2fr_1fr]' 
             : 'grid-cols-1 md:grid-cols-2'
           }
         `}
       >
-        {/* Mobile ≤425px: show only sidebar if no user, chat if user selected */}
-        <div className={`${selectedUser ? 'hidden sm:block' : 'block'}`}>
+        {/* Sidebar */}
+        <div className={`${selectedUser ? 'hidden sm:block' : 'block'} h-full overflow-y-auto`}>
           <SideBar />
         </div>
 
-        {/* Chat container: only visible when user selected on mobile */}
+        {/* Chat container: scrollable area */}
         {selectedUser && (
-          <div className='block sm:block'>
+          <div className='block sm:block h-full overflow-y-auto'>
             <ChatContainer />
           </div>
         )}
 
-        {/* RightSideBar: hide on mobile */}
-        <div className='hidden sm:block'>
+        {/* RightSideBar */}
+        <div className='hidden sm:block h-full overflow-y-auto'>
           <RightSideBar />
         </div>
       </div>

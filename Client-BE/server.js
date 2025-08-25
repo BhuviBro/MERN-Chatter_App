@@ -5,70 +5,59 @@ import http from "http";
 import { connectDB } from "./lib/db.js";
 import userRouter from "./routes/userRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
-import { Server } from "socket.io";
+import { Server } from "socket.io"
+import { log } from "console";
 
-// ----------------- Create Express app -----------------
+//Create express app and HTTP server
 const app = express();
-const server = http.createServer(app);
+const server = http.createServer(app)
 
-// ----------------- CORS Setup -----------------
-const allowedOrigins = [
-  "https://mern-chatter-frontend.vercel.app", // your frontend URL
-  "http://localhost:3000"                      // local dev
-];
-
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true,
-}));
-
-// ----------------- Socket.io -----------------
+// Initilaize socket.io server
 export const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"]
-  }
-});
+    cors: { origin: '*' }
+})
 
-export const userSocketMap = {}; // {userId: socketId}
+// Store online users
+export const userSocketMap = {}; //{userId :socketId}
 
+// Socket.io connectionhandler
 io.on("connection", (socket) => {
-  const userId = socket.handshake.query.userId;
-  console.log("User Connected:", userId);
+    const userId = socket.handshake.query.userId;
+    console.log("User Connected", userId);
 
-  if (userId) userSocketMap[userId] = socket.id;
+    if (userId) userSocketMap[userId] = socket.id
 
-  // Emit online users to all clients
-  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    // Emit Online users to all connected users
+    io.emit("getOnlineUsers", Object.keys(userSocketMap))
 
-  socket.on("disconnect", () => {
-    console.log("User Disconnected:", userId);
-    delete userSocketMap[userId];
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
-  });
-});
+    socket.on("disconnect", () => {
+        console.log("User Disconnected", userId);
+        delete userSocketMap[userId];
+        io.emit("getOnlineUser",Object.keys(userSocketMap))
+    })
 
-// ----------------- Middleware -----------------
-app.use(express.json({ limit: "4mb" }));
+})
 
-// Test route for CORS check
-app.get("/data", (req, res) => {
-  res.json({ message: "CORS is working" });
-});
+// Middle Ware Setup
+app.use(express.json({ limit: "4mb" }))
+app.use(cors());
 
-// ----------------- Routes -----------------
-app.use("/api/status", (req, res) => res.send("Server is Live"));
-app.use("/api/auth", userRouter);
-app.use("/api/messages", messageRouter);
 
-// ----------------- Connect MongoDB -----------------
+
+// Routes Setup
+app.use("/api/status", (req, res) => res.send("Server is Live"))
+app.use('/api/auth', userRouter)
+app.use("/api/messages", messageRouter)
+
+
+//Connect to MongoDB
 await connectDB();
 
-// ----------------- Start Server -----------------
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on PORT: ${PORT}`);
-});
+if(process.env.NODE_ENV != "production"){const PORT = process.env.PORT || 5000
+server.listen(PORT, () => {
+    console.log("Server is running on PORT:" + PORT)
+})}
 
-// ----------------- Export for Vercel -----------------
+
+// Export server for Vercel
 export default server;
