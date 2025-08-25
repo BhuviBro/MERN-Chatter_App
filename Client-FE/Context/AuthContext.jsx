@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
                 toast.success(data.message)
             }
             else {
-                console.log("Error in Login")
+                console.log("Error in Login:" +data.message)
                 toast.error(data.message)
             }
         } catch (error) {
