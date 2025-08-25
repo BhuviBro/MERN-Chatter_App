@@ -40,8 +40,6 @@ io.on("connection", (socket) => {
 
 // Middle Ware Setup
 app.use(express.json({ limit: "4mb" }))
-import cors from "cors";
-
 app.use(cors({
   origin: ["https://mern-chatter-app.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE"],
