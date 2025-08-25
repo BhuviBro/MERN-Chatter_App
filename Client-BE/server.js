@@ -11,12 +11,30 @@ import { Server } from "socket.io";
 const app = express();
 const server = http.createServer(app);
 
-// Initialize socket.io server
+// CORS Middleware FIRST (before routes)
+app.use(
+  cors({
+    origin: [
+      "https://mern-chatter-app.vercel.app", // frontend deployed
+      "http://localhost:5173",              // local dev
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
+
+// Handle preflight requests globally
+app.options("*", cors());
+
+// Body parser
+app.use(express.json({ limit: "4mb" }));
+
+// Socket.io setup
 export const io = new Server(server, {
   cors: {
     origin: [
-      "https://mern-chatter-app.vercel.app", // frontend on Vercel
-      "http://localhost:5173",               // local dev
+      "https://mern-chatter-app.vercel.app",
+      "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -26,38 +44,22 @@ export const io = new Server(server, {
 // Store online users
 export const userSocketMap = {}; // { userId : socketId }
 
-// Socket.io connection handler
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
   console.log("User Connected:", userId);
 
   if (userId) userSocketMap[userId] = socket.id;
 
-  // Emit online users to all connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   socket.on("disconnect", () => {
     console.log("User Disconnected:", userId);
     delete userSocketMap[userId];
-    io.emit("getOnlineUsers", Object.keys(userSocketMap)); // fixed typo "getOnlineUser"
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
-// Middleware Setup
-app.use(express.json({ limit: "4mb" }));
-
-app.use(
-  cors({
-    origin: [
-      "https://mern-chatter-app.vercel.app", // frontend on Vercel
-      "http://localhost:5173",               // local dev
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-
-// Routes Setup
+// Routes
 app.use("/api/status", (req, res) => res.send("Server is Live"));
 app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
@@ -65,7 +67,7 @@ app.use("/api/messages", messageRouter);
 // Connect to MongoDB
 await connectDB();
 
-// Start server (only in non-production)
+// Start server locally
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
