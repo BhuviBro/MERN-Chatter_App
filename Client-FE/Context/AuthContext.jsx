@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
                 connectSocket(data.user)
             }
         } catch (error) {
+            console.log("Error in CheckAuth")
             toast.error(error.message)
         }
     }
@@ -42,9 +43,11 @@ export const AuthProvider = ({ children }) => {
                 toast.success(data.message)
             }
             else {
+                console.log("Error in Login")
                 toast.error(data.message)
             }
         } catch (error) {
+            console.log("Error in Login Catch")
             toast.error(error.message)
         }
     }
