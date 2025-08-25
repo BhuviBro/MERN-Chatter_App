@@ -103,10 +103,10 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (token) {
             axios.defaults.headers.common["token"] = token;
+            checkAuth();
         }
-        checkAuth();
 
-    }, [])
+    }, [token])
 
     const value = {
         axios,
